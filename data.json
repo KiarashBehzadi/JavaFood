@@ -1,0 +1,70 @@
+{
+  "restaurants": [
+    {
+      "id": 1,
+      "name": "Paolo",
+      "address": "Roodaki st",
+      "openHour": 16,
+      "closeHour": 23,
+      "type": "FASTFOOD",
+	  "isOpen": true,
+      "foods": [
+        {"id": 1, "name": "American Pizza peperoni", "price": 10.0, "quantity": 10},
+        {"id": 2, "name": "Pasta Pesto", "price": 8.0, "quantity": 10}
+      ]
+    },
+    {
+      "id": 2,
+      "name": "Romano",
+      "address": "4Bagh Abbasi",
+      "openHour": 14,
+      "closeHour": 20,
+      "type": "FASTFOOD",
+      "foods": []
+    },
+    {
+      "id": 3,
+      "name": "Shatoot",
+      "address": "4Bagh Bala",
+      "openHour": 10,
+      "closeHour": 18,
+      "type": "COFFEE",
+      "foods": []
+    }
+  ],
+  "users": {
+    "restaurantOwners": [
+      {
+        "id": 1,
+        "name": "Mr Paolo",
+        "ownedRestaurants": [1, 2]
+      }
+    ],
+    "admins": [],
+    "customers": [
+      {
+        "id": 2,
+        "name": "Joey"
+      }
+    ]
+  },
+  "discounts": [
+    {"id": 1, "code": "abc", "amount": 50.0, "expireDate": "2025-02-21", "userId": 2},
+    {"id": 2, "code": "def", "amount": 50.0, "expireDate": "2025-02-21", "userId": 2}
+  ],
+  "orders": [
+    {
+      "id": 1,
+      "userId": 2,
+      "restaurantId": 1,
+      "receivingType": "COURIER",
+      "foods": [
+        {"foodId": 1, "quantity": 8},
+        {"foodId": 2, "quantity": 8}
+      ],
+      "discountCodes": ["abc", "def"],
+      "isPaid": true,
+	  "score": 5
+    }
+  ]
+}
