@@ -1,6 +1,6 @@
 package Users;
-import Models.Restaurant;
 
+import Models.Restaurant;
 import java.util.ArrayList;
 import java.util.List;
 
