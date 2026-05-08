@@ -1,13 +1,10 @@
 package JavaFood;
 
-import Models.Discount;
-import Models.Food;
-import Models.Order;
-import Models.Restaurant;
+
+import Models.*;
 import Users.RestaurantOwner;
 import Users.User;
 import com.google.gson.*;
-
 import java.io.FileReader;
 import java.io.IOException;
 import java.time.LocalDate;
@@ -21,6 +18,18 @@ public class AdminPanel {
     public static ArrayList<Discount> discounts = new ArrayList<>();
     public static ArrayList<Order> orders = new ArrayList<>();
 
+
+    /**
+     * Loads all data from a JSON file
+     *
+     * The JSON file should contain:
+     * -todayDate
+     * -restaurants
+     * -users
+     * -discounts
+     * -orders
+     * @param fileAddress path to the JSON file
+     */
     public void loadFromJSONFile(String fileAddress) {
         Gson gson = new Gson();
         try (FileReader reader = new FileReader(fileAddress)) {
@@ -131,20 +140,52 @@ public class AdminPanel {
         }
     }
 
+
+    /**
+     * Adds discount to the system
+     *
+     * @param discount the discount to add (must not be null)
+     */
     public void addDiscount(Discount discount) {
         discounts.add(discount);
     }
 
+
+    /**
+     * Adds a user to the system.
+     *
+     * @param user the user to add
+     *
+     */
     public void addUser(User user) {
         users.add(user);
     }
 
+
+    /**
+     * Adds a restaurant to the system.
+     *
+     * @param restaurant the restaurant to add
+     */
     public void addRestaurant(Restaurant restaurant) {
         restaurants.add(restaurant);
     }
 
+
+    /**
+     * Creates a new order for a user at a specific restaurant.
+     *
+     * @param id unique order identifier
+     * @param userId ID of the customer
+     * @param restaurant_id ID of the restaurant
+     * @param type delivery method (IN_PERSON or COURIER)
+     * @return a new Order instance, or null if restaurant not found
+     */
     public Order createOrder(Integer id, Integer userId, Integer restaurant_id, Order.ReceivingType type) {
-        return new Order(id, userId, restaurants.stream().filter(r -> Objects.equals(r.getId(), restaurant_id)).findFirst().orElse(null), type);
+        return new Order(id, userId, restaurants.stream()
+                .filter( r -> Objects.equals(r.getId(), restaurant_id) )
+                .findFirst()
+                .orElse(null), type);
     }
 
     public void setDate(LocalDate todayDate) {
@@ -163,6 +204,12 @@ public class AdminPanel {
         return bestRestaurant;
     }
 
+
+    /**
+     * Finds the restaurant with the most orders
+     *
+     * @return the restaurant with highest order volume today, or null if no restaurants exist
+     */
     public Restaurant getMostOrderedRestaurant() {
         int maxOrder = 0;
         Restaurant bestRestaurant = null;
