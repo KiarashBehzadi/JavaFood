@@ -1,7 +1,6 @@
 package Models;
 
 import lombok.Data;
-
 import java.time.LocalDate;
 
 @Data
@@ -15,11 +14,7 @@ public class Discount {
     private Integer percentage;
     private Boolean isUsed = false;
 
-    public enum DiscountType{
-        PERCENTAGE,
-        AMOUNT
-    }
-
+ 
     public Discount(Integer id, String code, Double amount, LocalDate expireDate, Integer userId) {
         this.id = id;
         this.code = code;
@@ -34,5 +29,10 @@ public class Discount {
         this.percentage = percentage;
         this.expireDate = expireDate;
         this.userId = userId;
+    }
+
+       public enum DiscountType{
+        PERCENTAGE,
+        AMOUNT
     }
 }
