@@ -3,7 +3,6 @@ package Models;
 import Exceptions.*;
 import JavaFood.AdminPanel;
 import lombok.Data;
-
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
@@ -12,8 +11,6 @@ import java.util.HashMap;
 @Data
 public class Order {
     private Integer id;
-    // Food - quantity
-    private final HashMap<Food, Integer> foods = new HashMap<>();
     private Double discountPrice = 0.0;
     private Integer userId;
     private Restaurant restaurant;
@@ -22,6 +19,7 @@ public class Order {
     private ReceivingType receivingType;
     private Boolean isPaid = false, isScored = false;
     private Integer score;
+    private final HashMap<Food, Integer> foods = new HashMap<>();
 
     public Order(Integer id, Integer userId, Restaurant restaurant, ReceivingType receivingType) {
         this.id = id;
@@ -35,8 +33,22 @@ public class Order {
         COURIER
     }
 
+    /*
+       Adds a food to the current order
+
+       This method validates:
+       - Food exists in restaurant menu
+       - Sufficient quantity available
+       - Restaurant is open for ordering
+
+       @throws FoodNotFound   if foodId doesn't exist in Restaurant
+       @throws FoodOutOfStock  if requested quantity exceeds available stock
+       @throws RestaurantIsClose  if Restaurant is not open
+    */
     public void addFoodToOrder(Integer foodId, int orderQuantity) {
-        Food food = restaurant.foods.keySet().stream().filter(f -> f.getId().equals(foodId)).findFirst().orElse(null);
+        Food food = restaurant.foods.keySet().stream().
+            filter( f -> f.getId().equals(foodId) )
+            .findFirst().orElse(null);
         if (food == null) {
             throw new FoodNotFound();
         }
@@ -52,8 +64,18 @@ public class Order {
         totalPrice += (food.getPrice() * orderQuantity);
     }
 
+        /*
+       Applies a discount code to this order.
+
+       validates discount code exists, is unused, not expired, and belongs to the user.
+       @param code  the discount code
+       @throws InvalidDiscountCode   if the discount code is invalid, expired, used, or not belongs to user
+    */
     public void addDiscount(String code) {
-        Discount discount = AdminPanel.discounts.stream().filter(d -> d.getCode().equals(code)).findFirst().orElse(null);
+        Discount discount = AdminPanel.discounts.stream()
+            .filter(d -> d.getCode().equals(code)).
+            findFirst()
+            .orElse(null);
         if (discount == null) {
             throw new InvalidDiscountCode("Discount code not found");
         }
@@ -77,20 +99,31 @@ public class Order {
         }
         discount.setIsUsed(true);
     }
-
+    
+     /*
+       Process payment for the order.
+       @param amount  the amount paid
+       @throws PayException   if the amount doesn't match totalPrice
+    */
+    
     public void pay(Double amount) {
         if (!totalPrice.equals(amount)) {
             throw new PayException();
         }
-        /*
-            Year/Month/Day Hour:Minute
-        */
+        
+       // Format: Year/Month/Day Hour:Minute (e.g., 2025/01/01 14:30)
         orderDateTime = LocalDateTime.of(AdminPanel.todayDate,  LocalTime.now());
         orderDateTime.format(DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm"));
         isPaid = true;
         AdminPanel.orders.add(this);
     }
 
+  /*
+       Submits a customer rating for the Restaurant after payment
+       @param score  score rating (from 1=worst to 5=best)
+       @throws InvalidScore   if already scored, order not paid yet, or score out of range
+    */
+    
     public void scoreOrder (Integer score) {
         if (isScored) {
             throw new InvalidScore("Already scored");
