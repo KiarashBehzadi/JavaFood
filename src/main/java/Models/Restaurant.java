@@ -2,7 +2,6 @@ package Models;
 
 import JavaFood.AdminPanel;
 import lombok.Data;
-
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -82,6 +81,7 @@ public class Restaurant {
                     });
                 }
         );
+        
         int max = 0;
         Food food = null;
         for (Map.Entry<Food, Integer> entry : orderedFoods.entrySet()) {
