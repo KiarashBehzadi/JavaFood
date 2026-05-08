@@ -10,6 +10,12 @@ import java.util.HashMap;
 
 @Data
 public class Order {
+
+    public enum ReceivingType {
+        IN_PERSON,
+        COURIER
+    }
+    
     private Integer id;
     private Double discountPrice = 0.0;
     private Integer userId;
@@ -26,11 +32,6 @@ public class Order {
         this.userId = userId;
         this.restaurant = restaurant;
         this.receivingType = receivingType;
-    }
-
-    public enum ReceivingType {
-        IN_PERSON,
-        COURIER
     }
     
     /**
@@ -114,8 +115,8 @@ public class Order {
         isPaid = true;
         AdminPanel.orders.add(this);
     }
-    
-    
+
+
     /**
      * Submits a customer rating for the Restaurant after payment
      * @param score  score rating (from 1=worst to 5=best)
