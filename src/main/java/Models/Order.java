@@ -32,23 +32,21 @@ public class Order {
         IN_PERSON,
         COURIER
     }
-
-    /*
-       Adds a food to the current order
-
-       This method validates:
-       - Food exists in restaurant menu
-       - Sufficient quantity available
-       - Restaurant is open for ordering
-
-       @throws FoodNotFound   if foodId doesn't exist in Restaurant
-       @throws FoodOutOfStock  if requested quantity exceeds available stock
-       @throws RestaurantIsClose  if Restaurant is not open
-    */
+    
+    /**
+     * Adds a food to the current order
+     * This method validates:
+     *  - Food exists in restaurant menu
+     *  - Sufficient quantity available
+     *  - Restaurant is open for ordering
+     * @throws FoodNotFound   if foodId doesn't exist in Restaurant
+     * @throws FoodOutOfStock  if requested quantity exceeds available stock
+     * @throws RestaurantIsClose  if Restaurant is not open
+     */
     public void addFoodToOrder(Integer foodId, int orderQuantity) {
-        Food food = restaurant.foods.keySet().stream().
-            filter( f -> f.getId().equals(foodId) )
-            .findFirst().orElse(null);
+        Food food = restaurant.foods.keySet().stream()
+                .filter( f -> f.getId().equals(foodId) )
+                .findFirst().orElse(null);
         if (food == null) {
             throw new FoodNotFound();
         }
@@ -64,18 +62,17 @@ public class Order {
         totalPrice += (food.getPrice() * orderQuantity);
     }
 
-        /*
-       Applies a discount code to this order.
-
-       validates discount code exists, is unused, not expired, and belongs to the user.
-       @param code  the discount code
-       @throws InvalidDiscountCode   if the discount code is invalid, expired, used, or not belongs to user
-    */
+    /**
+     * Applies a discount code to this order.
+     * validates discount code exists, is unused, not expired, and belongs to the user.
+     * @param code  the discount code
+     * @throws InvalidDiscountCode   if the discount code is invalid, expired, used, or not belongs to user
+     */
     public void addDiscount(String code) {
         Discount discount = AdminPanel.discounts.stream()
-            .filter(d -> d.getCode().equals(code)).
-            findFirst()
-            .orElse(null);
+                .filter(d -> d.getCode().equals(code)).
+                findFirst()
+                .orElse(null);
         if (discount == null) {
             throw new InvalidDiscountCode("Discount code not found");
         }
@@ -99,31 +96,31 @@ public class Order {
         }
         discount.setIsUsed(true);
     }
-    
-     /*
-       Process payment for the order.
-       @param amount  the amount paid
-       @throws PayException   if the amount doesn't match totalPrice
-    */
-    
+
+
+    /**
+     * Process payment for the order.
+     * @param amount  the amount paid
+     * @throws PayException   if the amount doesn't match totalPrice
+     */
     public void pay(Double amount) {
         if (!totalPrice.equals(amount)) {
             throw new PayException();
         }
-        
-       // Format: Year/Month/Day Hour:Minute (e.g., 2025/01/01 14:30)
+
+        // Format: Year/Month/Day Hour:Minute (e.g., 2025/01/01 14:30)
         orderDateTime = LocalDateTime.of(AdminPanel.todayDate,  LocalTime.now());
         orderDateTime.format(DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm"));
         isPaid = true;
         AdminPanel.orders.add(this);
     }
-
-  /*
-       Submits a customer rating for the Restaurant after payment
-       @param score  score rating (from 1=worst to 5=best)
-       @throws InvalidScore   if already scored, order not paid yet, or score out of range
-    */
     
+    
+    /**
+     * Submits a customer rating for the Restaurant after payment
+     * @param score  score rating (from 1=worst to 5=best)
+     * @throws InvalidScore   if already scored, order not paid yet, or score out of range
+     */
     public void scoreOrder (Integer score) {
         if (isScored) {
             throw new InvalidScore("Already scored");
